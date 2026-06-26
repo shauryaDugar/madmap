@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --brand-orange: #F97316;
+  --brand-yellow: #FBBF24;
+  --brand-green: #22C55E;
+  --brand-red: #EF4444;
+  --bg-cream: #FFF9F2;
+  --text-charcoal: #1F2937;
+  --text-slate: #6B7280;
+}
+
+@theme inline {
+  --color-orange: #F97316;
+  --color-yellow: #FBBF24;
+  --color-green: #22C55E;
+  --color-red: #EF4444;
+  --color-cream: #FFF9F2;
+  --color-charcoal: #1F2937;
+  --color-slate: #6B7280;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--text-charcoal);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@keyframes count-up {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes celebrate {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25) rotate(-3deg); }
+  70%  { transform: scale(1.15) rotate(3deg); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse-glow {
+  0%,100% { box-shadow: 0 0 0 0   rgba(249,115,22,0.5); }
+  50%      { box-shadow: 0 0 0 14px rgba(249,115,22,0); }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.animate-count-up   { animation: count-up  0.5s ease-out forwards; }
+.animate-celebrate  { animation: celebrate 0.6s ease-in-out; }
+.animate-pulse-glow { animation: pulse-glow 2s infinite; }
+.animate-slide-up   { animation: slide-up 0.4s ease-out forwards; }
+.progress-bar       { transition: width 1s ease-in-out; }
