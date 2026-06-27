@@ -1,10 +1,11 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
 import { supabase } from '@/lib/supabase'
+
+const DashboardHeatmap = dynamic(() => import('@/components/DashboardHeatmap'), { ssr: false })
 
 interface HeatmapPin {
   pin_code: string
@@ -18,28 +19,6 @@ interface Stats {
   total_sos: number
   total_customers: number
   top_products: { product_name: string; count: number }[]
-}
-
-const DEFAULT_MAP_CENTER: [number, number] = [22.9734, 78.6569]
-
-const KNOWN_PIN_COORDS: Record<string, [number, number]> = {
-  '110001': [28.6358, 77.2245],
-  '400001': [18.9388, 72.8355],
-  '560001': [12.9716, 77.5946],
-  '700001': [22.5726, 88.3639],
-  '600001': [13.0827, 80.2707],
-}
-
-function getPinLocation(pin: string): [number, number] {
-  const digits = pin.replace(/\D/g, '').padEnd(6, '0').slice(0, 6)
-  if (KNOWN_PIN_COORDS[digits]) return KNOWN_PIN_COORDS[digits]
-  const lat = 6 + (parseInt(digits.slice(0, 3), 10) / 999) * 20
-  const lng = 68 + (parseInt(digits.slice(3, 6), 10) / 999) * 25
-  return [lat, lng]
-}
-
-function getHeatColor(count: number) {
-  return count >= 5 ? '#EF4444' : count >= 2 ? '#FBBF24' : '#22C55E'
 }
 
 function DemandBadge({ count }: { count: number }) {
@@ -228,35 +207,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-3xl shadow-sm mb-6">
-              <MapContainer
-                center={DEFAULT_MAP_CENTER}
-                zoom={5}
-                scrollWheelZoom={false}
-                className="w-full h-96"
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {heatmap.map(pin => (
-                  <CircleMarker
-                    key={pin.pin_code}
-                    center={getPinLocation(pin.pin_code)}
-                    radius={Math.min(24, 8 + pin.report_count * 3)}
-                    pathOptions={{ color: getHeatColor(pin.report_count), fillColor: getHeatColor(pin.report_count), fillOpacity: 0.35 }}
-                  >
-                    <Popup>
-                      <div className="text-sm">
-                        <strong>{pin.pin_code}</strong><br />
-                        {pin.products.join(', ')}<br />
-                        Reports: {pin.report_count}
-                      </div>
-                    </Popup>
-                  </CircleMarker>
-                ))}
-              </MapContainer>
-            </div>
+            <DashboardHeatmap heatmap={heatmap} />
 
             {heatmap.length === 0 ? (
               <div className="text-center py-12" style={{ color: '#6B7280' }}>
