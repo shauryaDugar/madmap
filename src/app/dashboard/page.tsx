@@ -35,10 +35,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function load() {
-      // Aggregate SOS reports by PIN code
+      // Aggregate finalized SOS reports by PIN code
       const { data: sosData } = await supabase
         .from('sos_reports')
-        .select('pin_code, product_name, created_at')
+        .select('pin_code, product_name, created_at, report_status')
+        .eq('report_status', 'finalized')
         .order('created_at', { ascending: false })
 
       if (sosData) {

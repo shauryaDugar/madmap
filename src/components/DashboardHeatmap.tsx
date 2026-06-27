@@ -35,6 +35,18 @@ function getHeatColor(count: number) {
 export default function DashboardHeatmap({ heatmap }: { heatmap: HeatmapPin[] }) {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
+      <style>{`
+        .leaflet-container { background: #f0f0f0; }
+        .leaflet-pane, .leaflet-tile, .leaflet-marker-icon, .leaflet-marker-shadow,
+        .leaflet-tile-pane, .leaflet-overlay-pane, .leaflet-shadow-pane,
+        .leaflet-marker-pane, .leaflet-tooltip-pane, .leaflet-popup-pane {
+          position: absolute; list-style: none; margin: 0; padding: 0;
+        }
+        .leaflet-map-pane { z-index: 2; }
+        .leaflet-overlay-pane { z-index: 10; }
+        .leaflet-tile { will-change: transform; }
+        .leaflet-tile-container { z-index: 1; }
+      `}</style>
       <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-bold" style={{ color: '#1F2937' }}>Demand Heatmap by PIN Code</h2>

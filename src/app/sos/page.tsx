@@ -53,12 +53,26 @@ export default function SOSPage() {
     }
 
     try {
+      let screenshotUrl = null
+      
+      if (screenshotFile) {
+        const fileName = `${Date.now()}-${screenshotFile.name}`
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('sos-screenshots')
+          .upload(`reports/${fileName}`, screenshotFile)
+        
+        if (uploadError) throw new Error(`Screenshot upload failed: ${uploadError.message}`)
+        
+        screenshotUrl = uploadData?.path
+      }
+
       const payload: Record<string, unknown> = {
         pin_code: form.pin_code,
         product_name: form.product_name,
         platform: form.platform,
         points_earned: 0,
         report_status: 'pending',
+        screenshot_url: screenshotUrl,
         customer_phone: form.customer_phone || null,
         location_lat: location?.lat ?? null,
         location_lng: location?.lng ?? null,
@@ -66,10 +80,10 @@ export default function SOSPage() {
 
       const { error: err } = await supabase.from('sos_reports').insert(payload)
 
-      if (err) throw err
+      if (err) throw new Error(`Report submission failed: ${err.message}`)
       setSubmitted(true)
-    } catch {
-      setError('Something went wrong. Please try again.')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
